@@ -586,3 +586,12 @@ body.jw-abierta .ia-fab{opacity:0;pointer-events:none}
 @keyframes latido{0%,100%{box-shadow:0 10px 24px rgba(5,91,42,.35)}50%{box-shadow:0 10px 30px rgba(200,230,28,.7)}}
 @media (max-width:820px){.jw-arte{min-height:240px}.jw-pj-mini{height:84px}}
 @media (prefers-reduced-motion:reduce){.jw-pj-mini{animation:none!important;opacity:1}}
+
+/* Video actualizado de JUAICO */
+.jw-video{object-position:50% 45%}
+.jw-escucha{position:absolute;right:68px;top:22px;z-index:3;background:rgba(255,255,255,.95);color:#2f5200;font:800 12.5px 'Montserrat';padding:7px 12px;border-radius:999px;box-shadow:0 6px 16px rgba(0,0,0,.25);cursor:pointer;display:flex;gap:6px;align-items:center;animation:escucha 2.2s ease-in-out infinite;transition:opacity .3s}
+.jw-escucha.off{opacity:0;pointer-events:none}
+.jw-sonido:not(.on){animation:pulsoSonido 2.2s ease-out infinite}
+@keyframes escucha{0%,100%{transform:translateX(0)}50%{transform:translateX(-4px)}}
+@keyframes pulsoSonido{0%{box-shadow:0 0 0 0 rgba(200,230,28,.8),0 6px 18px rgba(0,0,0,.3)}100%{box-shadow:0 0 0 16px rgba(200,230,28,0),0 6px 18px rgba(0,0,0,.3)}}
+@media (prefers-reduced-motion:reduce){.jw-escucha,.jw-sonido{animation:none!important}}
