@@ -292,10 +292,16 @@ function montar(){
    <div class="ia-foot">Responde con los datos del tablero · no envía información a servidores</div>`;
   document.body.append(fab,pnl);
   const msgs=$('#iaMsgs');
-  const abrir=()=>{pnl.classList.add('on');fab.classList.add('off');if(!msgs.children.length)bienvenida();setTimeout(()=>$('#iaQ').focus(),200)};
-  const cerrar=()=>{pnl.classList.remove('on');fab.classList.remove('off')};
+  const abrir=()=>{pnl.classList.add('on');fab.classList.add('off');const jv=$('#jwVideo');if(jv){jv.pause();jv.muted=true}if(!msgs.children.length)bienvenida();vozBanner();setTimeout(()=>$('#iaQ').focus(),200)};
+  const cerrar=()=>{pnl.classList.remove('on');fab.classList.remove('off');msgs.querySelectorAll('.ia-bvideo').forEach(v=>{v.pause();v.muted=true;bsUI(v)})};
+  function bsUI(v){const b=v&&v.parentNode.querySelector('.ia-bsonido');if(!b)return;b.innerHTML=`<i class="fa-solid ${v.muted?'fa-volume-xmark':'fa-volume-high'}"></i>`;b.title=v.muted?'Activar sonido':'Silenciar';b.setAttribute('aria-label',b.title);b.classList.toggle('on',!v.muted)}
+  function reproducir(v,sonido){v.muted=!sonido;const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{if(!v.muted){v.muted=true;v.play().catch(()=>{})}bsUI(v)});bsUI(v)}
+  function vozBanner(){const vs=msgs.querySelectorAll('.ia-bvideo'),v=vs[vs.length-1];if(!v)return;vs.forEach(o=>{if(o!==v){o.pause();o.muted=true;bsUI(o)}});v.loop=false;try{v.currentTime=0}catch(e){}reproducir(v,true)}
+  // Al terminar el saludo con voz, el video sigue en silencio y en bucle
+  msgs.addEventListener('ended',e=>{const v=e.target;if(v.classList&&v.classList.contains('ia-bvideo')){v.loop=true;reproducir(v,false)}},true);
+  msgs.addEventListener('click',e=>{const b=e.target.closest('.ia-bsonido');if(!b)return;const v=b.parentNode.querySelector('.ia-bvideo');if(v.muted){if(v.loop){v.loop=false;try{v.currentTime=0}catch(err){}}reproducir(v,true)}else{v.muted=true;bsUI(v)}});
   fab.onclick=abrir;$('#iaX').onclick=cerrar;
-  $('#iaClr').onclick=()=>{msgs.innerHTML='';ctx={};bienvenida()};
+  $('#iaClr').onclick=()=>{msgs.innerHTML='';ctx={};bienvenida();vozBanner()};
   $('#iaLib').onclick=()=>{const b=$('#iaLibBox');b.hidden=!b.hidden;if(!b.hidden)b.innerHTML=libHTML()};
   $('#iaLibBox').onclick=ev=>{const c=ev.target.closest('[data-q]');if(c){$('#iaLibBox').hidden=true;enviar(c.dataset.q)}};
   $('#iaForm').onsubmit=ev=>{ev.preventDefault();const v=$('#iaQ').value.trim();if(v){$('#iaQ').value='';enviar(v)}};
@@ -344,7 +350,7 @@ function montar(){
   if(mostrar)setTimeout(verBienvenida,900);
   else try{if(!sessionStorage.getItem('iaHola')){setTimeout(()=>fab.classList.add('hola'),1800);setTimeout(()=>fab.classList.remove('hola'),9000);sessionStorage.setItem('iaHola','1')}}catch(e){}
   function libHTML(){return PREGUNTAS.map(([c,ic,qs])=>`<div class="ia-cat"><h6><i class="fa-solid ${ic}"></i>${c}</h6>${qs.map(q=>`<button data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`).join('')}
-  function bienvenida(){bot({html:`<div class="ia-banner"><video class="ia-bvideo" src="assets/juaico-video-sm.mp4?v=2" poster="assets/juaico-poster.jpg?v=2" autoplay muted loop playsinline preload="metadata" aria-label="${NOMBRE} saludando en Tenjo"></video></div><p>¡Hola! Soy <b>${NOMBRE}</b> 👋, el asistente del tablero de la Política Pública Educativa de Tenjo.</p><p>Pregúntame por el avance de una vigencia, eje, línea o acción, por la población beneficiada, los logros o las dependencias.</p>`,chips:['¿Cómo va la política en 2026?','Dame el avance de la línea estratégica 2.3','¿Cuáles son las acciones más rezagadas?','¿Cuál es la población beneficiada?','Ver todas las preguntas']},true)}
+  function bienvenida(){bot({html:`<div class="ia-banner"><video class="ia-bvideo" src="assets/juaico-video.mp4?v=2" poster="assets/juaico-poster.jpg?v=2" muted playsinline preload="auto" aria-label="${NOMBRE} saludando en Tenjo"></video><button class="ia-bsonido" aria-label="Activar sonido" title="Activar sonido"><i class="fa-solid fa-volume-xmark"></i></button></div><p>¡Hola! Soy <b>${NOMBRE}</b> 👋, el asistente del tablero de la Política Pública Educativa de Tenjo.</p><p>Pregúntame por el avance de una vigencia, eje, línea o acción, por la población beneficiada, los logros o las dependencias.</p>`,chips:['¿Cómo va la política en 2026?','Dame el avance de la línea estratégica 2.3','¿Cuáles son las acciones más rezagadas?','¿Cuál es la población beneficiada?','Ver todas las preguntas']},true)}
   function user(t){const d=document.createElement('div');d.className='ia-m u';d.innerHTML=`<div class="ia-b">${esc(t)}</div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight}
   function bot(r,inst){const d=document.createElement('div');d.className='ia-m b';
     const tools=`${r.ir?`<button class="ia-go" data-go='${esc(JSON.stringify(r.ir))}'><i class="fa-solid fa-arrow-up-right-from-square"></i>${esc(r.ir.label)}</button>`:''}${r.copiar?`<button class="ia-go" data-copy="${esc(r.copiar)}"><i class="fa-solid fa-copy"></i>Copiar texto</button>`:''}${r.accion?`<button class="ia-go" data-acc='${esc(JSON.stringify(r.accion))}'><i class="fa-solid fa-magnifying-glass-chart"></i>Ver ficha de la acción</button>`:''}`;

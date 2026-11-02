@@ -595,3 +595,8 @@ body.jw-abierta .ia-fab{opacity:0;pointer-events:none}
 @keyframes escucha{0%,100%{transform:translateX(0)}50%{transform:translateX(-4px)}}
 @keyframes pulsoSonido{0%{box-shadow:0 0 0 0 rgba(200,230,28,.8),0 6px 18px rgba(0,0,0,.3)}100%{box-shadow:0 0 0 16px rgba(200,230,28,0),0 6px 18px rgba(0,0,0,.3)}}
 @media (prefers-reduced-motion:reduce){.jw-escucha,.jw-sonido{animation:none!important}}
+
+/* Sonido del video en el chat */
+.ia-bsonido{position:absolute;right:10px;top:10px;z-index:2;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#055B2A;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.2s}
+.ia-bsonido:hover{transform:scale(1.08)}
+.ia-bsonido.on{background:var(--lima);color:#1d3300}
